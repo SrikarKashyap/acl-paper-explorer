@@ -1,0 +1,8 @@
+flask
+openai
+numpy
+pandas
+rank-bm25
+opik
+python-dotenv
+gunicorn

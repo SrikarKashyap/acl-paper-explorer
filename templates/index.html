@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACL 2026 Paper Explorer | Hybrid RAG Search</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="glass-bg"></div>
+
+    <!-- App Container -->
+    <div class="app-container">
+        
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-logo">
+                <div class="logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                <div class="logo-text">
+                    <h1>ACL 2026</h1>
+                    <span>Paper Explorer & RAG Assistant</span>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="app-nav">
+                <button class="nav-btn active" data-tab="search-chat">
+                    <i class="fa-solid fa-magnifying-glass"></i> <span>Search & Chat</span>
+                </button>
+                <button class="nav-btn" data-tab="schedule">
+                    <i class="fa-solid fa-calendar-days"></i> <span>Full Schedule</span>
+                </button>
+                <button class="nav-btn" data-tab="starred">
+                    <i class="fa-solid fa-star"></i> <span>My Schedule <span id="starred-count" class="badge">0</span></span>
+                </button>
+            </nav>
+            
+            <!-- Settings / Config -->
+            <div class="header-actions">
+                <button id="settings-toggle" class="action-btn" title="Retrieval Settings">
+                    <i class="fa-solid fa-sliders"></i>
+                </button>
+                <div class="settings-dropdown" id="settings-dropdown">
+                    <h3>Retrieval Settings</h3>
+                    <div class="setting-item">
+                        <label for="top-n-slider">Retrieve Top N Papers: <span id="top-n-val">10</span></label>
+                        <input type="range" id="top-n-slider" min="5" max="50" value="10" step="5">
+                        <span class="range-labels"><span>5</span><span>25</span><span>50</span></span>
+                    </div>
+                    <div class="setting-note">
+                        <i class="fa-solid fa-info-circle"></i> Uses Reciprocal Rank Fusion (RRF) to merge BM25 and Dense vector search rankings.
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Body -->
+        <main class="app-main">
+            
+            <!-- TAB 1: Search & Chat -->
+            <section id="tab-search-chat" class="tab-content active">
+                <div class="search-layout">
+                    <!-- Left: Input & Chat Area -->
+                    <div class="chat-container">
+                        <div class="welcome-box" id="welcome-box">
+                            <h2>Welcome to ACL 2026 Paper Explorer</h2>
+                            <p>Explore all 4,872 papers being presented at the 64th Annual Meeting of the Association for Computational Linguistics. Powered by hybrid keyword (BM25) and dense semantic search, coupled with a RAG Chat Assistant.</p>
+                            
+                            <div class="suggested-queries">
+                                <h4>Suggested Topics:</h4>
+                                <div class="suggestions-list">
+                                    <button class="suggest-btn">papers on multimodal RAG</button>
+                                    <button class="suggest-btn">efficiency improvements in LLMs</button>
+                                    <button class="suggest-btn">bias and safety evaluation in agents</button>
+                                    <button class="suggest-btn">what is the room location for Minecraft Dialogues?</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chat messages log -->
+                        <div class="chat-messages" id="chat-messages">
+                            <!-- Messages appended here dynamically -->
+                        </div>
+
+                        <!-- Search/Query Input Bar -->
+                        <div class="search-bar-container">
+                            <div class="input-wrapper">
+                                <i class="fa-solid fa-keyboard keyboard-icon"></i>
+                                <input type="text" id="query-input" placeholder="Search papers or ask a question..." autocomplete="off">
+                                <button id="btn-search" class="search-action-btn search-only-btn" title="Search Raw Papers Only">
+                                    <i class="fa-solid fa-list-ul"></i> Search Only
+                                </button>
+                                <button id="btn-chat" class="search-action-btn chat-ai-btn" title="Ask Assistant (RAG)">
+                                    <i class="fa-solid fa-sparkles"></i> Ask AI
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Raw Results List (Sidebar) -->
+                    <div class="results-sidebar" id="results-sidebar">
+                        <div class="sidebar-header">
+                            <h3>Results Panel</h3>
+                            <span id="results-count" class="results-count">0 papers found</span>
+                        </div>
+                        <div class="results-list" id="results-list">
+                            <div class="empty-results">
+                                <i class="fa-solid fa-arrow-left"></i>
+                                <p>Search or ask AI to see relevant papers here</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: Full Schedule -->
+            <section id="tab-schedule" class="tab-content">
+                <div class="schedule-container">
+                    <div class="schedule-header">
+                        <h2>ACL 2026 Session Schedule</h2>
+                        <p>Browse papers by day, session, and rooms. Export complete sessions straight to your calendar.</p>
+                        
+                        <div class="schedule-filters">
+                            <div class="day-selector">
+                                <button class="day-btn active" data-date="Sun. July 5">Sun. July 5</button>
+                                <button class="day-btn" data-date="Mon. July 6">Mon. July 6</button>
+                                <button class="day-btn" data-date="Tues. July 7">Tues. July 7</button>
+                            </div>
+                            <div class="filter-controls">
+                                <div class="search-box">
+                                    <i class="fa-solid fa-magnifying-glass"></i>
+                                    <input type="text" id="schedule-search" placeholder="Filter papers in schedule...">
+                                </div>
+                                <select id="mode-filter" class="select-filter">
+                                    <option value="all">All Modes</option>
+                                    <option value="In-Person">In-Person</option>
+                                    <option value="Virtual">Virtual</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loading state for schedule -->
+                    <div id="schedule-loading" class="schedule-loading">
+                        <i class="fa-solid fa-spinner fa-spin"></i> Loading schedule database...
+                    </div>
+
+                    <!-- Schedule Accordion Wrapper -->
+                    <div class="sessions-wrapper" id="sessions-wrapper" style="display: none;">
+                        <!-- Sessions rendered here dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: Starred Papers -->
+            <section id="tab-starred" class="tab-content">
+                <div class="starred-container">
+                    <div class="starred-header">
+                        <div class="starred-title-row">
+                            <h2>My Schedule</h2>
+                            <button id="btn-export-starred" class="btn-primary" style="display: none;">
+                                <i class="fa-solid fa-download"></i> Export Full Schedule (ICS)
+                            </button>
+                        </div>
+                        <p>Your starred papers organized by day and session — a personal conference itinerary. Persisted locally in your browser. Export sessions or everything to your calendar.</p>
+                    </div>
+
+                    <div class="starred-list" id="starred-list">
+                        <div class="empty-starred">
+                            <i class="fa-regular fa-star"></i>
+                            <p>No starred papers yet. Star papers from the search results or schedule to build your calendar itinerary.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Paper Modal Dialog -->
+    <div class="modal" id="paper-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="modal-paper-id" id="modal-paper-id">3034-CL</span>
+                <button class="close-modal" id="close-modal"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <h2 id="modal-title">Paper Title</h2>
+                <div class="modal-authors" id="modal-authors">Authors list</div>
+                
+                <div class="modal-metadata-grid">
+                    <div class="meta-item">
+                        <i class="fa-solid fa-desktop"></i>
+                        <div>
+                            <strong>Mode</strong>
+                            <span id="modal-mode">In-Person</span>
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fa-solid fa-door-open"></i>
+                        <div>
+                            <strong>Location / Room</strong>
+                            <span id="modal-room">Harbor B-C</span>
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fa-solid fa-clock"></i>
+                        <div>
+                            <strong>Session & Time</strong>
+                            <span id="modal-session">Session 3 (14:00 - 15:30)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-abstract-section">
+                    <h3>Abstract</h3>
+                    <p id="modal-abstract">Abstract text here...</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="modal-star-btn" class="modal-action-btn">
+                    <i class="fa-regular fa-star"></i> Star Paper
+                </button>
+                <button id="modal-similar-btn" class="modal-action-btn">
+                    <i class="fa-solid fa-diagram-project"></i> Find Similar Papers
+                </button>
+                <a id="modal-anthology-link" href="#" target="_blank" class="modal-action-btn primary-action">
+                    <i class="fa-solid fa-external-link"></i> View in ACL Anthology
+                </a>
+                <a id="modal-scholar-link" href="#" target="_blank" class="modal-action-btn">
+                    <i class="fa-brands fa-google"></i> Google Scholar
+                </a>
+                <div class="calendar-dropdown-container">
+                    <button class="modal-action-btn" id="modal-cal-btn">
+                        <i class="fa-regular fa-calendar-plus"></i> Add to Calendar <i class="fa-solid fa-caret-down"></i>
+                    </button>
+                    <div class="cal-dropdown" id="modal-cal-dropdown">
+                        <a href="#" id="modal-gcal-link" target="_blank"><i class="fa-brands fa-google"></i> Google Calendar</a>
+                        <a href="#" id="modal-ics-link"><i class="fa-solid fa-file-export"></i> Download ICS File</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Markdowns parser library for Chat (simple client side renderer) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Custom JS -->
+    <script src="/static/app.js"></script>
+</body>
+</html>
