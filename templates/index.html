@@ -10,6 +10,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Apply saved theme before first paint to avoid flashing -->
+    <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('acl2026_theme') || 'dark');</script>
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/static/style.css">
 </head>
@@ -38,12 +40,15 @@
                     <i class="fa-solid fa-calendar-days"></i> <span>Full Schedule</span>
                 </button>
                 <button class="nav-btn" data-tab="starred">
-                    <i class="fa-solid fa-star"></i> <span>My Schedule <span id="starred-count" class="badge">0</span></span>
+                    <i class="fa-solid fa-star"></i> <span>My Schedule <span class="badge starred-count-badge">0</span></span>
                 </button>
             </nav>
             
             <!-- Settings / Config -->
             <div class="header-actions">
+                <button id="theme-toggle" class="action-btn" title="Toggle Light/Dark Mode">
+                    <i class="fa-solid fa-sun"></i>
+                </button>
                 <button id="settings-toggle" class="action-btn" title="Retrieval Settings">
                     <i class="fa-solid fa-sliders"></i>
                 </button>
@@ -71,7 +76,7 @@
                     <div class="chat-container">
                         <div class="welcome-box" id="welcome-box">
                             <h2>Welcome to ACL 2026 Paper Explorer</h2>
-                            <p>Explore all 4,872 papers being presented at the 64th Annual Meeting of the Association for Computational Linguistics. Powered by hybrid keyword (BM25) and dense semantic search, coupled with a RAG Chat Assistant.</p>
+                            <p class="welcome-desc">Explore all 4,872 papers being presented at the 64th Annual Meeting of the Association for Computational Linguistics. Powered by hybrid keyword (BM25) and dense semantic search, coupled with a RAG Chat Assistant.</p>
                             
                             <div class="suggested-queries">
                                 <h4>Suggested Topics:</h4>
@@ -95,10 +100,10 @@
                                 <i class="fa-solid fa-keyboard keyboard-icon"></i>
                                 <input type="text" id="query-input" placeholder="Search papers or ask a question..." autocomplete="off">
                                 <button id="btn-search" class="search-action-btn search-only-btn" title="Search Raw Papers Only">
-                                    <i class="fa-solid fa-list-ul"></i> Search Only
+                                    <i class="fa-solid fa-list-ul"></i> <span class="btn-label">Search Only</span>
                                 </button>
                                 <button id="btn-chat" class="search-action-btn chat-ai-btn" title="Ask Assistant (RAG)">
-                                    <i class="fa-solid fa-sparkles"></i> Ask AI
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> <span class="btn-label">Ask AI</span>
                                 </button>
                             </div>
                         </div>
@@ -183,6 +188,23 @@
 
         </main>
     </div>
+
+    <!-- Mobile Bottom Navigation -->
+    <nav class="mobile-nav">
+        <button class="nav-btn active" data-tab="search-chat">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>Search</span>
+        </button>
+        <button class="nav-btn" data-tab="schedule">
+            <i class="fa-solid fa-calendar-days"></i>
+            <span>Schedule</span>
+        </button>
+        <button class="nav-btn" data-tab="starred">
+            <i class="fa-solid fa-star"></i>
+            <span>My Plan</span>
+            <span class="badge starred-count-badge">0</span>
+        </button>
+    </nav>
 
     <!-- Paper Modal Dialog -->
     <div class="modal" id="paper-modal">

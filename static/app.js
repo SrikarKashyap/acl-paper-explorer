@@ -6,6 +6,7 @@ let retrievedPapersMap = {}; // Maps paper_number -> paper details for search/ch
 
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', () => {
+    initTheme();
     initTabs();
     initSettings();
     initSearch();
@@ -13,6 +14,24 @@ document.addEventListener('DOMContentLoaded', () => {
     loadScheduleData(); // Load all papers for schedule in background
     updateStarredCount();
 });
+
+// --- Theme (Dark / Light) ---
+function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    const icon = document.querySelector('#theme-toggle i');
+    if (icon) {
+        icon.className = theme === 'light' ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+    }
+}
+
+function initTheme() {
+    applyTheme(localStorage.getItem('acl2026_theme') || 'dark');
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+        const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        localStorage.setItem('acl2026_theme', next);
+        applyTheme(next);
+    });
+}
 
 // --- Tab Navigation ---
 function initTabs() {
@@ -24,10 +43,10 @@ function initTabs() {
             const targetTab = btn.getAttribute('data-tab');
             activeTab = targetTab;
             
-            navButtons.forEach(b => b.classList.remove('active'));
+            // Sync active state across both top nav and mobile bottom nav
+            navButtons.forEach(b => b.classList.toggle('active', b.getAttribute('data-tab') === targetTab));
             tabContents.forEach(tc => tc.classList.remove('active'));
 
-            btn.classList.add('active');
             document.getElementById(`tab-${targetTab}`).classList.add('active');
 
             if (targetTab === 'starred') {
@@ -100,7 +119,9 @@ function toggleStar(paperNum, event) {
 }
 
 function updateStarredCount() {
-    document.getElementById('starred-count').textContent = starredPapers.length;
+    document.querySelectorAll('.starred-count-badge').forEach(el => {
+        el.textContent = starredPapers.length;
+    });
     const exportBtn = document.getElementById('btn-export-starred');
     if (exportBtn) {
         exportBtn.style.display = starredPapers.length > 0 ? 'flex' : 'none';
@@ -187,8 +208,8 @@ function renderStarredView() {
                         </div>
                     </div>
                     <div class="accordion-actions">
-                        <button class="btn-ics-export" onclick="exportSessionICS('${paperNums}', event)">
-                            <i class="fa-solid fa-file-arrow-down"></i> Add to Calendar
+                        <button class="btn-ics-export" title="Add session to calendar" onclick="exportSessionICS('${paperNums}', event)">
+                            <i class="fa-solid fa-file-arrow-down"></i> <span class="btn-label">Add to Calendar</span>
                         </button>
                         <i class="fa-solid fa-chevron-down accordion-icon"></i>
                     </div>
@@ -350,8 +371,8 @@ function renderScheduleView() {
                     </div>
                 </div>
                 <div class="accordion-actions">
-                    <button class="btn-ics-export" onclick="exportSessionICS('${paperNums}', event)">
-                        <i class="fa-solid fa-file-arrow-down"></i> Export Session
+                    <button class="btn-ics-export" title="Export session to calendar" onclick="exportSessionICS('${paperNums}', event)">
+                        <i class="fa-solid fa-file-arrow-down"></i> <span class="btn-label">Export Session</span>
                     </button>
                     <i class="fa-solid fa-chevron-down accordion-icon"></i>
                 </div>
