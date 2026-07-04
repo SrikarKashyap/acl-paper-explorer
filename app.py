@@ -183,6 +183,10 @@ def generate_llm_response(query, context_papers):
 def index():
     return render_template('index.html')
 
+@app.route('/about')
+def about():
+    return render_template('about.html')
+
 @app.route('/api/search', methods=['POST'])
 def search_api():
     data = request.json or {}

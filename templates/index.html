@@ -11,7 +11,7 @@
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Apply saved theme before first paint to avoid flashing -->
-    <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('acl2026_theme') || 'dark');</script>
+    <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('acl2026_theme') || 'light');</script>
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/static/style.css">
 </head>
@@ -46,6 +46,12 @@
             
             <!-- Settings / Config -->
             <div class="header-actions">
+                <a href="/about" class="action-btn" title="About this project">
+                    <i class="fa-solid fa-circle-info"></i>
+                </a>
+                <a href="https://srikarkashyap.com" target="_blank" rel="noopener" class="action-btn" title="srikarkashyap.com">
+                    <i class="fa-solid fa-globe"></i>
+                </a>
                 <button id="theme-toggle" class="action-btn" title="Toggle Light/Dark Mode">
                     <i class="fa-solid fa-sun"></i>
                 </button>

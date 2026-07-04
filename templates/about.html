@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | ACL 2026 Paper Explorer</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Apply saved theme before first paint to avoid flashing -->
+    <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('acl2026_theme') || 'light');</script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="glass-bg"></div>
+
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <a href="/" class="header-logo plain-link">
+                <div class="logo-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+                <div class="logo-text">
+                    <h1>ACL 2026</h1>
+                    <span>Paper Explorer & RAG Assistant</span>
+                </div>
+            </a>
+            <div class="header-actions">
+                <a href="/" class="action-btn" title="Back to the app">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <a href="https://srikarkashyap.com" target="_blank" rel="noopener" class="action-btn" title="srikarkashyap.com">
+                    <i class="fa-solid fa-globe"></i>
+                </a>
+            </div>
+        </header>
+
+        <!-- About Content -->
+        <main class="about-content">
+            <h2>About this project</h2>
+            <p>
+                <strong>ACL 2026 Paper Explorer</strong> is a fast way to explore the <strong>4,872 papers</strong>
+                presented at the 64th Annual Meeting of the Association for Computational Linguistics (July 5&ndash;7, 2026).
+                Conference programs this large are impossible to skim — the idea here is simple: type what you care about
+                in plain language, get the most relevant papers instantly, star the ones you want to see, and walk out
+                with a session-by-session itinerary in your calendar.
+            </p>
+
+            <h3><i class="fa-solid fa-magnifying-glass"></i> How search works</h3>
+            <ul>
+                <li><strong>Hybrid retrieval.</strong> Every query runs two searches in parallel: classic keyword matching
+                    (BM25) and semantic similarity over OpenAI <code>text-embedding-3-small</code> vectors of each
+                    paper's title and abstract. The two rankings are merged with Reciprocal Rank Fusion (RRF, k=60),
+                    so exact-term matches and "means the same thing" matches both surface.</li>
+                <li><strong>Precomputed embeddings.</strong> All paper embeddings are generated once, offline, and cached —
+                    a search only embeds your query (one small API call), which keeps results fast and cheap.</li>
+                <li><strong>Find similar.</strong> From any paper you can jump to its nearest neighbors by embedding
+                    similarity — handy for building a themed session plan.</li>
+            </ul>
+
+            <h3><i class="fa-solid fa-wand-magic-sparkles"></i> The AI assistant</h3>
+            <p>
+                "Ask AI" is retrieval-augmented generation: the top matching papers are handed to an OpenAI model as
+                context, and it answers with numbered citations. Every citation links straight to the paper, and the raw
+                retrieved results always appear alongside the answer — so you can verify or dig deeper yourself.
+                All searches and completions are traced with <a href="https://www.comet.com/site/products/opik/" target="_blank" rel="noopener">Opik</a>
+                for observability.
+            </p>
+
+            <h3><i class="fa-solid fa-calendar-days"></i> Planning your conference</h3>
+            <ul>
+                <li><strong>Full Schedule</strong> — browse all sessions by day, filter by presentation mode or keywords.</li>
+                <li><strong>My Schedule</strong> — your starred papers organized by day and session, exportable as ICS
+                    files or added to Google Calendar directly. Stars are stored only in your browser; nothing is tracked.</li>
+                <li><strong>Paper links</strong> — every paper links out to the
+                    <a href="https://aclanthology.org/events/acl-2026/" target="_blank" rel="noopener">ACL Anthology</a>
+                    and Google Scholar.</li>
+            </ul>
+
+            <h3><i class="fa-solid fa-layer-group"></i> The stack</h3>
+            <p>
+                Deliberately simple: a single <strong>Flask</strong> app with vanilla JavaScript and CSS — no build step,
+                no database. Papers, embeddings, and the BM25 index all live in memory, loaded from a preprocessed cache
+                at startup. It deploys as one gunicorn process behind nginx.
+            </p>
+
+            <div class="about-footer">
+                Built by <a href="https://srikarkashyap.com" target="_blank" rel="noopener">Srikar Kashyap Pulipaka</a>
+                &middot; Paper data from the official ACL 2026 program
+            </div>
+        </main>
+    </div>
+</body>
+</html>

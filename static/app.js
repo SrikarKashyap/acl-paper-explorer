@@ -25,7 +25,7 @@ function applyTheme(theme) {
 }
 
 function initTheme() {
-    applyTheme(localStorage.getItem('acl2026_theme') || 'dark');
+    applyTheme(localStorage.getItem('acl2026_theme') || 'light');
     document.getElementById('theme-toggle').addEventListener('click', () => {
         const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
         localStorage.setItem('acl2026_theme', next);
