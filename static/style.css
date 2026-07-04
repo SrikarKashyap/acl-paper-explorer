@@ -440,6 +440,23 @@ body {
     line-height: 1.6;
 }
 
+.coverage-note {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--subtle-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 6px 14px;
+}
+
+.coverage-note i {
+    color: var(--color-purple);
+    font-size: 0.8rem;
+}
+
 .suggested-queries {
     margin-top: 16px;
     width: 100%;
