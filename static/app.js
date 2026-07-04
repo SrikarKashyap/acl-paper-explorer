@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initSearch();
     initStarred();
     initFeedback();
+    initInstallPrompt();
     loadScheduleData(); // Load all papers for schedule in background
     updateStarredCount();
 });
@@ -79,6 +80,56 @@ function initSettings() {
 
     slider.addEventListener('input', () => {
         sliderVal.textContent = slider.value;
+    });
+}
+
+// --- Add to Home Screen (PWA install) ---
+let deferredInstallPrompt = null;
+
+function initInstallPrompt() {
+    // Register the service worker that makes the app installable
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+    
+    const banner = document.getElementById('install-banner');
+    const installBtn = document.getElementById('install-btn');
+    const hintEl = document.getElementById('install-hint');
+    
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+        || window.navigator.standalone === true;
+    const dismissed = localStorage.getItem('acl2026_install_dismissed') === '1';
+    const isMobile = /android|iphone|ipad|ipod/i.test(navigator.userAgent);
+    
+    if (isStandalone || dismissed || !isMobile) return;
+    
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    
+    if (isIOS) {
+        // iOS has no install prompt API — show instructions instead
+        hintEl.innerHTML = 'Tap <i class="fa-solid fa-arrow-up-from-bracket"></i> then "Add to Home Screen"';
+        installBtn.style.display = 'none';
+        banner.classList.add('visible');
+    } else {
+        // Android/Chrome: wait for the browser to say the app is installable
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredInstallPrompt = e;
+            banner.classList.add('visible');
+        });
+        
+        installBtn.addEventListener('click', async () => {
+            if (!deferredInstallPrompt) return;
+            deferredInstallPrompt.prompt();
+            await deferredInstallPrompt.userChoice;
+            deferredInstallPrompt = null;
+            banner.classList.remove('visible');
+        });
+    }
+    
+    document.getElementById('install-dismiss').addEventListener('click', () => {
+        banner.classList.remove('visible');
+        localStorage.setItem('acl2026_install_dismissed', '1');
     });
 }
 

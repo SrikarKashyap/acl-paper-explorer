@@ -188,6 +188,11 @@ def index():
 def about():
     return render_template('about.html')
 
+@app.route('/sw.js')
+def service_worker():
+    # Served from the root so the service worker scope covers the whole app
+    return app.send_static_file('sw.js')
+
 @app.route('/api/search', methods=['POST'])
 def search_api():
     data = request.json or {}

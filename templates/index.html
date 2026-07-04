@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ACL 2026 Paper Explorer | Hybrid RAG Search</title>
+    <!-- PWA / Add to Home Screen -->
+    <link rel="manifest" href="/static/manifest.json">
+    <meta name="theme-color" content="#8b5cf6">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="ACL 2026">
+    <link rel="apple-touch-icon" href="/static/icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/icons/favicon-32.png">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -279,6 +287,19 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- Add to Home Screen banner (mobile) -->
+    <div class="install-banner" id="install-banner">
+        <img src="/static/icons/icon-192.png" alt="ACL 2026 app icon">
+        <div class="install-text">
+            <strong>Add to your home screen</strong>
+            <span id="install-hint">One-tap access to papers and your schedule</span>
+        </div>
+        <button id="install-btn" class="btn-primary">Install</button>
+        <button id="install-dismiss" class="install-dismiss" title="Dismiss">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
     </div>
 
     <!-- Feedback Modal -->
