@@ -49,9 +49,12 @@
                 <a href="/about" class="action-btn" title="About this project">
                     <i class="fa-solid fa-circle-info"></i>
                 </a>
-                <a href="https://srikarkashyap.com" target="_blank" rel="noopener" class="action-btn" title="srikarkashyap.com">
+                <a href="https://srikarkashyap.com" target="_blank" rel="noopener" class="action-btn hide-mobile" title="srikarkashyap.com">
                     <i class="fa-solid fa-globe"></i>
                 </a>
+                <button id="feedback-toggle" class="action-btn" title="Feedback & Feature Requests">
+                    <i class="fa-regular fa-comment-dots"></i>
+                </button>
                 <button id="theme-toggle" class="action-btn" title="Toggle Light/Dark Mode">
                     <i class="fa-solid fa-sun"></i>
                 </button>
@@ -273,6 +276,33 @@
                         <a href="#" id="modal-gcal-link" target="_blank"><i class="fa-brands fa-google"></i> Google Calendar</a>
                         <a href="#" id="modal-ics-link"><i class="fa-solid fa-file-export"></i> Download ICS File</a>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal -->
+    <div class="modal" id="feedback-modal">
+        <div class="modal-content feedback-modal-content">
+            <div class="modal-header">
+                <span class="modal-paper-id">FEEDBACK</span>
+                <button class="close-modal" id="close-feedback"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <h2>Feedback & Feature Requests</h2>
+                <p class="feedback-sub">Found a bug? Missing a feature? Tell me — it helps make this tool better for everyone at the conference.</p>
+                <div class="feedback-form">
+                    <select id="feedback-type" class="select-filter">
+                        <option value="feature">Feature request</option>
+                        <option value="bug">Bug report</option>
+                        <option value="general">General feedback</option>
+                    </select>
+                    <textarea id="feedback-message" rows="5" maxlength="5000" placeholder="What's on your mind?"></textarea>
+                    <input type="email" id="feedback-email" maxlength="200" placeholder="Email (optional — only if you'd like a reply)">
+                    <button id="feedback-submit" class="btn-primary">
+                        <i class="fa-solid fa-paper-plane"></i> Send Feedback
+                    </button>
+                    <div class="feedback-status" id="feedback-status"></div>
                 </div>
             </div>
         </div>

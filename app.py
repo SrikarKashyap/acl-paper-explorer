@@ -1,5 +1,6 @@
 import os
 import re
+import json
 import pickle
 from datetime import datetime, timezone
 import numpy as np
@@ -300,6 +301,30 @@ def get_paper_details(paper_number):
         if paper['paper_number'] == paper_number:
             return jsonify(paper)
     return jsonify({"error": "Paper not found"}), 404
+
+@app.route('/api/feedback', methods=['POST'])
+def feedback_api():
+    """Stores user feedback/feature requests as JSON lines in feedback.jsonl."""
+    data = request.json or {}
+    message = (data.get('message') or '').strip()
+    if not message:
+        return jsonify({"error": "Message cannot be empty"}), 400
+        
+    entry = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "type": str(data.get('type') or 'general')[:50],
+        "message": message[:5000],
+        "email": str(data.get('email') or '').strip()[:200],
+        "user_agent": request.headers.get('User-Agent', '')[:300]
+    }
+    
+    try:
+        with open('feedback.jsonl', 'a', encoding='utf-8') as f:
+            f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        return jsonify({"success": True})
+    except Exception as e:
+        print(f"Feedback API error: {e}")
+        return jsonify({"error": "Could not save feedback"}), 500
 
 @app.route('/api/export_ics', methods=['GET'])
 def export_ics():

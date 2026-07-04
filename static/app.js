@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initSettings();
     initSearch();
     initStarred();
+    initFeedback();
     loadScheduleData(); // Load all papers for schedule in background
     updateStarredCount();
 });
@@ -79,6 +80,78 @@ function initSettings() {
     slider.addEventListener('input', () => {
         sliderVal.textContent = slider.value;
     });
+}
+
+// --- Feedback Modal ---
+function initFeedback() {
+    const modal = document.getElementById('feedback-modal');
+    
+    document.getElementById('feedback-toggle').addEventListener('click', () => {
+        modal.classList.add('active');
+    });
+    
+    document.getElementById('close-feedback').addEventListener('click', () => {
+        modal.classList.remove('active');
+    });
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('active');
+    });
+    
+    document.getElementById('feedback-submit').addEventListener('click', submitFeedback);
+    
+    // Allow linking straight to the feedback form (e.g. /#feedback from the About page)
+    if (location.hash === '#feedback') {
+        modal.classList.add('active');
+    }
+}
+
+async function submitFeedback() {
+    const messageEl = document.getElementById('feedback-message');
+    const emailEl = document.getElementById('feedback-email');
+    const typeEl = document.getElementById('feedback-type');
+    const statusEl = document.getElementById('feedback-status');
+    const submitBtn = document.getElementById('feedback-submit');
+    
+    const message = messageEl.value.trim();
+    if (!message) {
+        statusEl.textContent = 'Please write a message first.';
+        statusEl.className = 'feedback-status error';
+        return;
+    }
+    
+    submitBtn.disabled = true;
+    statusEl.textContent = 'Sending...';
+    statusEl.className = 'feedback-status';
+    
+    try {
+        const res = await fetch('/api/feedback', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                type: typeEl.value,
+                message: message,
+                email: emailEl.value.trim()
+            })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            statusEl.textContent = 'Thank you! Your feedback has been recorded.';
+            statusEl.className = 'feedback-status success';
+            messageEl.value = '';
+            emailEl.value = '';
+        } else {
+            statusEl.textContent = data.error || 'Something went wrong. Please try again.';
+            statusEl.className = 'feedback-status error';
+        }
+    } catch (e) {
+        console.error(e);
+        statusEl.textContent = 'Could not reach the server. Please try again.';
+        statusEl.className = 'feedback-status error';
+    } finally {
+        submitBtn.disabled = false;
+    }
 }
 
 // --- Starred Manager (localStorage) ---
@@ -852,6 +925,7 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         document.getElementById('paper-modal').classList.remove('active');
         document.getElementById('modal-cal-dropdown').classList.remove('active');
+        document.getElementById('feedback-modal').classList.remove('active');
     }
 });
 
