@@ -176,6 +176,16 @@ body {
     font-weight: 400;
 }
 
+.byline {
+    color: var(--color-purple);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.byline:hover {
+    text-decoration: underline;
+}
+
 /* Navigation */
 .app-nav {
     display: flex;
@@ -1701,16 +1711,29 @@ body {
         font-size: 1.05rem;
     }
     
-    .logo-text span {
+    /* Keep the byline visible on mobile, drop only the long descriptor */
+    .logo-text .logo-sub {
+        display: block;
+        font-size: 0.65rem;
+        white-space: nowrap;
+    }
+    
+    .hide-mobile-inline {
         display: none;
     }
     
     .header-actions {
-        gap: 6px;
+        gap: 5px;
     }
     
     .header-actions .hide-mobile {
         display: none;
+    }
+    
+    .action-btn {
+        width: 34px;
+        height: 34px;
+        font-size: 0.85rem;
     }
     
     .settings-dropdown {
