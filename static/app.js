@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initStarred();
     initFeedback();
     initInstallPrompt();
+    initShare();
     loadScheduleData(); // Load all papers for schedule in background
     updateStarredCount();
 });
@@ -81,6 +82,55 @@ function initSettings() {
     slider.addEventListener('input', () => {
         sliderVal.textContent = slider.value;
     });
+}
+
+// --- Share ---
+function initShare() {
+    document.getElementById('share-btn').addEventListener('click', async () => {
+        const shareData = {
+            title: 'ACL 2026 Paper Explorer',
+            text: 'Search all 4,872 ACL 2026 papers with AI, star your favorites, and export your schedule to your calendar:',
+            url: window.location.origin
+        };
+        
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (e) {
+                // User cancelled the share sheet — nothing to do
+            }
+        } else {
+            const textToCopy = `${shareData.text} ${shareData.url}`;
+            try {
+                await navigator.clipboard.writeText(textToCopy);
+                showToast('Link copied to clipboard!');
+            } catch (e) {
+                // Clipboard API blocked — fall back to a hidden textarea
+                const ta = document.createElement('textarea');
+                ta.value = textToCopy;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                ta.remove();
+                showToast('Link copied to clipboard!');
+            }
+        }
+    });
+}
+
+let toastTimer = null;
+function showToast(message) {
+    let toast = document.getElementById('app-toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'app-toast';
+        toast.className = 'app-toast';
+        document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add('visible');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('visible'), 2500);
 }
 
 // --- Add to Home Screen (PWA install) ---
